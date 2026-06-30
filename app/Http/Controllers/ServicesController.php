@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Service;
+use Illuminate\Http\Request;
+use App\Http\Requests\StoreServicesRequest;
+use App\Http\Requests\UpdateServiceRequest;
+
+class ServicesController extends Controller
+{
+    public function index()
+    {
+        $services = Service::paginate(config('pagination.count'));
+        return view('admin.services.index',get_defined_vars());
+    }
+    public function create()
+    {
+        return view('admin.services.create');
+    }
+    public function store(StoreServicesRequest $request)
+    {
+        $service = $request->validated();
+         Service::create($service);
+        
+        return redirect()->route('admin.services.index')->with('status','Successfully Add Service');
+    }
+
+    public function show(Service $service)
+    {
+        return view('admin.services.show',get_defined_vars());
+    }
+    public function edit(Service $service)
+    {
+        return view('admin.services.edit', get_defined_vars());
+    }
+    public function update(Service $service , UpdateServiceRequest $request)
+    {
+        $data = $request->validated();
+        $service->update($data);
+        return redirect()->route('admin.services.index')->with('status', 'Successfully updata Service');
+    }
+    public function destroy(Service $service)
+    {
+        $service->delete();
+
+        return redirect()
+            ->route('admin.services.index')
+            ->with('status', 'Service deleted successfully.');
+    }
+}
